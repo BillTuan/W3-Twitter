@@ -7,12 +7,15 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ListView
+  ListView,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
 
 import {connect} from 'react-redux';
 import {fetchData} from '../action/fetchDataAction';
+import CellData from './CellListView';
 
 class HomeCom extends Component {
   static navigationOptions = {
@@ -23,6 +26,7 @@ class HomeCom extends Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       dataSource: ds.cloneWithRows([]),
+      refreshing: false
     };
   }
 
@@ -39,45 +43,19 @@ class HomeCom extends Component {
   }
 
   renderRow (rowData){
-    console.log(rowData);
-    return (
-      <View style={{marginBottom: 3, backgroundColor: 'white', flexDirection: 'row'}}>
-        <View style={{flex: 1}}>
-          <Image
-            style={{borderRadius: 45, width: 45, height: 50, margin: 5}}
-            source={{uri: rowData.user.profile_image_url}}
-          />
-
-        </View>
-
-        <View style={{flex: 6}}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{}}>
-              {rowData.user.name}
-            </Text>
-            <Text style={{marginLeft: 5}}>
-              @{rowData.user.screen_name}
-            </Text>
-          </View>
-
-          <Text style={{}}>
-            {rowData.text}
-          </Text>
-
-          <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
-              <Icon name="ios-chatbubbles-outline" size={20}/>
-              <View style={{flexDirection: 'row'}}>
-                <Icon name="md-repeat" size={20}/>
-                <Text style={{}}>{rowData.retweet_count}</Text>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <Icon name="md-heart-outline" size={20}/>
-                <Text style={{}}>{rowData.favorite_count}</Text>
-              </View>
-          </View>
-        </View>
-      </View>
+    return(
+      <CellData rowData={rowData}/>
     )
+  }
+
+  _onRefresh(){
+    this.setState({
+      refreshing: true,
+    });
+    this.props.getData(this.props.info, 'https://api.twitter.com/1.1/statuses/home_timeline.json');
+    this.setState({
+        refreshing: false,
+    });
   }
 
   _header(){
@@ -89,7 +67,7 @@ class HomeCom extends Component {
             source={require('../images/Twitter_white.png')}
           />
         </TouchableOpacity>
-        <Text style={{}}>
+        <Text style={styles.headerTitle}>
           Home
         </Text>
       </View>
@@ -99,8 +77,14 @@ class HomeCom extends Component {
     return (
       <View style={styles.container}>
         {this._header()}
-        <View style={{flex: 9, backgroundColor: 'white'}}>
+        <View style={{flex: 9, backgroundColor: 'black'}}>
           <ListView
+            refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />
+              }
             style={{flex: 1}}
             dataSource={this.state.dataSource}
             renderRow={(rowData) => this.renderRow(rowData)}
@@ -123,6 +107,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     elevation: 2
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: "600",
+    marginLeft: 30
   }
 });
 

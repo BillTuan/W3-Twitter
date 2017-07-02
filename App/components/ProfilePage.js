@@ -34,39 +34,51 @@ class ProfileCom extends Component {
             style={styles.mainIcon}
             source={{uri: user.profile_image_url}}
           />
-          <Text style={{}}>
+          <Text style={styles.name}>
             {user.name}
           </Text>
           <Text style={{}}>
             @{user.screen_name}
           </Text>
 
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{}}>
-              {user.friends_count} Following
+          <View style={{flexDirection: 'row', marginTop: 15}}>
+            <Text style={styles.number}>
+              {user.friends_count}
             </Text>
-            <Text style={{}}>
-              {user.followers_count} Followers
+            <Text style={styles.follow}>
+              Following
+            </Text>
+            <Text style={[styles.number, {marginLeft: 10}]}>
+              {user.followers_count}
+            </Text>
+            <Text style={styles.follow}>
+              Followers
             </Text>
           </View>
 
-          <TouchableOpacity onPress={()=> this.props.navigation.navigate('Profile_Screen')}>
+          <TouchableOpacity
+            onPress={()=> this.props.navigation.navigate('Profile_Screen')}
+            style = {styles.button}
+            >
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Icon
-                  name="perm-identity" size={30}
+                  name="perm-identity" size={30} color='black'
                 />
-                <Text style={{}}>
+                <Text style={styles.titleButton}>
                   Profile
                 </Text>
             </View>
           </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Home_Screen')}>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('Home_Screen')}
+          style = {styles.button}
+          >
           <View style={{flexDirection: 'row' , alignItems: 'center'}}>
               <Icon
-                name="home" size={30}
+                name="home" size={30} color='black'
               />
-              <Text style={{}}>
+              <Text style={styles.titleButton}>
                 Home Timeline
               </Text>
           </View>
@@ -79,14 +91,36 @@ class ProfileCom extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 15,
+    marginLeft: 25,
     flex: 1,
   },
   mainIcon:{
     marginTop: 15,
     width: 50,
     height: 50,
-    borderRadius: 50
+    borderRadius: 50,
+    borderWidth: 1,
+  },
+  name: {
+    marginTop: 10,
+    fontSize: 20,
+    fontWeight: "800",
+    color: 'black'
+  },
+  number: {
+    fontWeight: "600",
+    color: 'black'
+  },
+  follow: {
+    marginLeft: 5
+  },
+  button: {
+    marginTop: 25
+  },
+  titleButton: {
+    fontSize: 18,
+    fontWeight: "200",
+    marginLeft: 10
   }
 });
 const mapStateToProps = (state) => {

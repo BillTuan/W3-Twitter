@@ -35,7 +35,7 @@ class LoginCom extends Component {
           backgroundColor="#1DA1F2"
           onPress = {() => this.props.doLogin()}
           >
-          Login with Twitter
+          Sign in with Twitter
         </Icon.Button>
       </View>
     );
