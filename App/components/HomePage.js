@@ -18,9 +18,17 @@ import {fetchData} from '../action/fetchDataAction';
 import CellData from './CellListView';
 
 class HomeCom extends Component {
-  static navigationOptions = {
-    header: null
-  };
+  static navigationOptions = ({navigation}) => ({
+    header: null,
+    tabBarIcon: ({tintColor}) => (
+        <Image
+          style={{ resizeMode: 'contain', flex: 1, tintColor: tintColor}}
+          source={require('../images/home.png')}
+        />
+    )
+
+  });
+
   constructor(props) {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -30,7 +38,7 @@ class HomeCom extends Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getData(this.props.info, 'https://api.twitter.com/1.1/statuses/home_timeline.json');
   }
 

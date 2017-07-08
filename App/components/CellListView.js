@@ -11,43 +11,75 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
+import {connect} from 'react-redux';
+import { getHeaders, } from 'react-native-simple-auth/lib/utils/oauth1';
 
 const like = require('../images/like.png');
 const likeGif = require('../images/like_gif.gif');
 const unlike = require('../images/unlike.png');
 
-export default class CellDataCom extends Component {
+const config = {
+   consumerKey: 'YKAVBoCGFTPcfgRvDoU7nZluM',
+   consumerSecret: '7K0ZLaG0HrrXUfgha69sxnZmM8Idgpu4Z9VuZ8mEwS0pM4iRSZ',
+};
+
+class CellDataCom extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       likeImage: unlike,
-      likeStatus: false
+      likeStatus: false,
+      rowData : this.props.rowData
     };
+  }
+
+  _postFavorite(apiLink){
+    var { credentials: { oauth_token, oauth_token_secret } } = this.props.info;
+    const httpMethod = 'POST';
+    const url = apiLink;
+    const headers = getHeaders(url, {id:this.props.rowData.id_str}, {}, config.consumerKey, config.consumerSecret, httpMethod, oauth_token, oauth_token_secret);
+    fetch(url + '?id=' + this.props.rowData.id_str, {
+      method: httpMethod,
+      headers
+    }).then((response) => response.json())
+    .then((responseJSON) => {
+    this.setState({
+      rowData: responseJSON,
+    });
+    }).catch((err) => alert(JSON.stringify(err)))
   }
 
   clickLike(){
     if(!this.state.likeStatus){
+       this._postFavorite('https://api.twitter.com/1.1/favorites/create.json');
       this.setState({
         likeImage: likeGif,
         likeStatus: !this.state.likeStatus
       })
-
       setTimeout(() => {
         this.setState({
           likeImage: like,
         });
       }, 3200)
     }else{
+      this._postFavorite('https://api.twitter.com/1.1/favorites/destroy.json');
       this.setState({
         likeImage: unlike,
         likeStatus: !this.state.likeStatus
       });
     }
   }
+  componentDidMount() {
+    if (this.state.rowData.favorited == true){
+      this.setState({
+        likeImage: like,
+        likeStatus: true
+      });
+    }
+  }
   render() {
-    var rowData = this.props.rowData;
+    var rowData = this.state.rowData;
     var date = new Date(rowData.created_at);
     var time = moment(date).fromNow();
     return (
@@ -78,7 +110,6 @@ export default class CellDataCom extends Component {
                 <Text style={{color: 'black'}}> {rowData.retweet_count}</Text>
               </View>
               <View style={{flexDirection: 'row'}}>
-                  {/* <Icon name="md-heart-outline" size={20}/> */}
                   <TouchableOpacity onPress={() => this.clickLike()}>
                     <Image
                       style={{width: 20, height: 20}}
@@ -112,3 +143,10 @@ const styles = StyleSheet.create({
     color: 'black'
   }
 });
+
+const mapStateToProps = (state) => {
+  return {
+    info: state.loginReducer.info
+  }
+}
+export default connect(mapStateToProps, {})(CellDataCom);

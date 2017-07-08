@@ -10,22 +10,19 @@ export default function dataReducer (state = initialState, action) {
   switch (action.type) {
     case FETCHING:
       return {
-        error: false,
+        ...state,
         isFetching: true,
-        dataAPI: []
       }
     case FETCH_SUCCESS:
       return {
-        error: false,
-        isFetching: false,
+        ...state,
         dataAPI: action.data
       }
 
     case FETCH_FAIL:
       return {
-        isFetching: false,
+        ...state,
         error: true,
-        dataAPI: []
       }
     default:
     return state

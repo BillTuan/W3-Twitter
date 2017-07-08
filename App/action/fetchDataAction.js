@@ -27,14 +27,13 @@ function fetchFail () {
 
 
 export function fetchData (info, apiLink) {
-
   const { credentials: { oauth_token, oauth_token_secret } } = info;
   const httpMethod = 'GET';
   const url = apiLink;
-  const headers = getHeaders(url, {}, {}, config.consumerKey, config.consumerSecret, httpMethod, oauth_token, oauth_token_secret);
+  const headers = getHeaders(url, {count: 50}, {}, config.consumerKey, config.consumerSecret, httpMethod, oauth_token, oauth_token_secret);
   return (dispatch) => {
     dispatch(fetching())
-    fetch(url, {
+    fetch(url + '?count=50', {
       method: httpMethod,
       headers
     }).then((response) => response.json())

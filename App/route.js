@@ -1,4 +1,4 @@
-import {StackNavigator, DrawerNavigator, DrawerItems} from 'react-navigation';
+import {StackNavigator, DrawerNavigator, DrawerItems, TabNavigator} from 'react-navigation';
 import {
   View,
   Text,
@@ -14,27 +14,52 @@ import DetailProfilePage from './components/DetailProfilePage';
 const Route = {
   Login_Screen:{
     screen: LoginPage
-  },
-  Home_Screen: {
-    screen: HomePage
-  },
-  Profile_Screen: {
-    screen: DetailProfilePage
   }
 }
-const Stack = StackNavigator(Route);
+const  Stack= StackNavigator(Route);
 
+const Tabbar = TabNavigator({
+    Home_Screen: {
+      screen: HomePage
+    },
+    Profile_Screen: {
+      screen: DetailProfilePage
+    }
+  },
+  {
+    initialRouteName:'Home_Screen',
+    tabBarPosition : 'bottom',
+    swipeEnabled :true,
+    lazy: true,
+    tabBarOptions: {
+      showIcon : true,
+      showLabel : false,
+      style: {
+        backgroundColor: 'white',
+        borderTopWidth: 1
+      },
+      indicatorStyle: {
+        backgroundColor: 'white'
+      },
+      activeTintColor: 'red',
+      inactiveTintColor: '#1DA1F2',
+    }
+  }
+)
 
 const Navigator = DrawerNavigator({
+  Login: {
+    screen: Stack
+  },
     Main_Screen: {
-      screen: Stack
+      screen: Tabbar
     }
   },
   {
     drawerWidth: 300,
     drawerPosition: 'left',
     contentComponent: props => <ProfilePage {...props} />
-  }
+  }, {initialRouteName:'Login'}
 );
 
 export default Navigator

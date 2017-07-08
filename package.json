@@ -8,6 +8,7 @@
 	},
 	"dependencies": {
 		"moment": "^2.18.1",
+		"ohauth": "^1.0.0",
 		"react": "~15.4.1",
 		"react-native": "0.42.0",
 		"react-native-simple-auth": "^2.1.0",
